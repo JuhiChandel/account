@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <body>
+    <div id="header"><span id="title"></span>
+    <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
+    <form method="POST" action="/register/register/login/" >
+        {% csrf_token %}
+
+        <div id="content">
+            <div id="content1">
+                <p id="logo">Login</p>
+                E-mail Id:<br />
+                <input type="email" name="email" id="email" />
+                <br />
+                Password:<br />
+                <input type="password" name="pass" id="pass"/>
+                 <br />
+                <div id="but"><br />
+                <input type="submit" value="Login" />
+                <input type="submit" value="Signup" id="button1" onclick="location.href='http://127.0.0.1:8000/register/register/register_form/'" />
+                <br />
+                </div>
+                <br />
+                <a href="http://127.0.0.1:8000/register/register/forget_password/">Forget Password</a>
+                <br />
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
