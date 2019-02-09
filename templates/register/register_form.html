@@ -1,54 +1,62 @@
 <!DOCTYPE html>
 {% load static %}
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Register</title>
-    </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <body>
-    <div id="header"><span id="title"></span>
-    <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
-    <form name="myForm" method="POST" action="/register/register/register_form/" onsubmit="return check(this)">
-        {% csrf_token %}
+        <div id="header"><span id="title"></span>
+            <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
+            <form name="myForm" method="POST" action="/register/register/register_form/" onsubmit="return check(this)">
+            {% csrf_token %}
 
+                    <div id="content">
+                    <div id="content1">
+                        <p id="logo">Register</p>
+                        Username:<br />
+                        <input type="text" name="name" id="name" />
 
-        <div id="content">
-            <div id="content1">
-                <p id="logo">Register</p>
-                Username:<br />
-                <input type="text" name="name" id="name" />
-                <br />
-                E-mail Id:<br />
-                <input type="email" name="email" id="email" />
-                <br />
-                Password:<br />
-                <input type="password" name="pass" id="pass"/>
-                <br />
-                Password Confirmation:<br />
-                <input type="password" name="con" id="con" />
-                <br />
-                <br />
-                <div id="but">
-                    <input type="submit" value="Signup" id="button" />
-                    <input type="submit" value="Login" id="button1" onclick="location.href='http://127.0.0.1:8000/register/register/login/'" />
-                </div>
-                <br />
-            </div>
+                        <br />
+                        E-mail Id:<br />{{message}}
+                        <input type="email" name="email" id="email" />
+                        <br />
+                        Password:<br />
+                        <input type="password" name="pass" id="pass"/>
+                        <br />
+                        Password Confirmation:<br />
+                        <input type="password" name="con" id="con" />
+                        <br />
+                        <br />
+                        <div id="but">
+                            <input type="submit" value="Signup" id="button" />
+                        </div>
+                        <br />
+                        <a href="{% url 'register:login' %}">Login</a>
+                    </div>
+                    </div>
+            </form>
+
         </div>
-    </form>
-    <script type="text/javascript">
-
+<script type="text/javascript">
     function check(form)
     {
         name = document.getElementById("name");
         email = document.getElementById("email");
         pass = document.getElementById("pass");
         con = document.getElementById("con");
+
         if(form.name.value == "" && form.email.value == "" && form.pass.value == "" && form.name.value == "")
+            {
+                M.toast({html : 'You should fill the form before signup'});
+                return false;
+            }
+            n = /^\w+$/;
+        if(!n.test(form.name.value))
         {
-            M.toast({html : 'You should fill the form before signup'});
+
             return false;
         }
         if(form.name.value == "")
@@ -57,13 +65,7 @@
             form.name.focus();
             return false;
         }
-        n = /^\w+$/;
-        if(!n.test(form.name.value))
-        {
-            M.toast({html: 'Username must contain only letters, numbers and underscores!'});
-            form.name.focus();
-            return false;
-        }
+
         if(form.pass.value != "" && form.pass.value == form.con.value)
         {
             if(form.pass.value.length < 8)
@@ -111,11 +113,10 @@
             form.pass.focus();
             return false;
         }
-         M.toast({html: 'You are successfully signup'});
-    return true;
+        M.toast({html: 'You are successfully signup'});
+        return true;
     }
 
 </script>
-</div>
 </body>
 </html>

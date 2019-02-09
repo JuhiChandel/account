@@ -10,7 +10,7 @@
     <body>
     <div id="header"><span id="title"></span>
     <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
-    <form method="POST" action="/register/register/login/" >
+    <form method="POST" action="/register/register/login/" onsubmit="return check(this)" >
         {% csrf_token %}
 
         <div id="content">
@@ -19,21 +19,72 @@
                 E-mail Id:<br />
                 <input type="email" name="email" id="email" />
                 <br />
-                Password:<br />
+                Password:<br />{{message}}
                 <input type="password" name="pass" id="pass"/>
                  <br />
                 <div id="but"><br />
                 <input type="submit" value="Login" />
-                <input type="submit" value="Signup" id="button1" onclick="location.href='http://127.0.0.1:8000/register/register/register_form/'" />
                 <br />
                 </div>
                 <br />
-                <a href="http://127.0.0.1:8000/register/register/forget_password/">Forget Password</a>
+                <a href="{% url 'register:register_form' %}">Singup</a>
                 <br />
+                <br />
+                <a href="{% url 'register:forget_password' %}">Forget Password?</a>
+                <br />
+
             </div>
         </div>
     </form>
 
 </div>
 </body>
+<script type="text/javascript">
+    function check(form)
+    {
+        email = document.getElementById("email");
+        pass = document.getElementById("pass");
+        if(form.email.value == "" && form.pass.value == "")
+        {
+            M.toast({html : 'You should details before login'});
+            return false;
+        }
+        if(form.pass.value.length < 8)
+        {
+
+            M.toast({html: 'Password must contain at least eight characters!'});
+            form.pass.focus();
+            return false;
+        }
+        n = /[0-9]/;
+        if(!n.test(form.pass.value))
+        {
+
+            M.toast({html: 'Password must contain at least one number (0-9)!'});
+            form.pass.focus();
+            return false;
+        }
+        n = /[a-z]/;
+        if(!n.test(form.pass.value))
+        {
+
+            M.toast({html: 'Password must contain at least one lowercase letter (a-z)!'});
+            form.pass.focus();
+               return false;
+        }
+        n = /[A-Z]/;
+        if(!n.test(form.pass.value))
+        {
+
+            M.toast({html: 'Password must contain at least one uppercase letter (A-Z)!'});
+            form.pass.focus();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+</script>
 </html>

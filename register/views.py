@@ -1,24 +1,67 @@
 from django.core.mail import send_mail
-from django.conf import settings
+from django.contrib import auth
 import random
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.views.decorators.csrf import csrf_exempt
-from register.models import Register, User_ver
-
+from register.models import Register, User_ver, Student
 
 def start(request):
     return HttpResponse("<h1>Welcome</h1>")
 
+@csrf_exempt
+def create_student(request):
+    response = {}
+    if request.method == 'GET':
+        return render_to_response('register/create_student.html')
+    elif request.method == 'POST':
+        enroll = request.POST['enroll']
+        print(enroll)
+        name = request.POST['name']
+        print(name)
+        class1 = request.POST['class1']
+        print(class1)
+        stream = request.POST['stream']
+        print(stream)
+        father = request.POST['father']
+        print(father)
+        dob = request.POST['dob']
+        print(dob)
+        add = request.POST['add']
+        print(add)
+        enroll1 = Student.objects.filter(enroll=enroll).exists()
+        if enroll1:
+            print("already exist")
+            context = {
+                'message': 'Enrollment number already exist'
 
+            }
+            return render_to_response('register/create_student.html', context)
+        else:
+            p = Student.objects.create(enroll=enroll, name=name, class1=class1, stream=stream, father=father, dob=dob, add=add)
+            return render_to_response('register/create_student.html')
+
+@csrf_exempt
+def logout(request):
+    try:
+        del request.session['email']
+    except KeyError:
+        pass
+    return redirect('/register/register/register_form/')
+
+@csrf_exempt
 def home(request):
-    return HttpResponse("<h1>Welcome</h1>")
+    if request.method == 'GET':
+        data = Student.objects.all().order_by('-enroll')
+        context = {'data': data}
+        return render_to_response('register/home.html', context)
 
 
 @csrf_exempt
 def register_form(request):
+    response = {}
     if request.method == 'GET':
-        return render_to_response('register/register_form.html', {'message': "success"})
+        return render_to_response('register/register_form.html')
     elif request.method == 'POST':
         user = request.POST['name']
         print(user)
@@ -32,8 +75,15 @@ def register_form(request):
         print(otp)
         reg = Register.objects.filter(email=email).exists()
         if reg:
-            print("Error: E-mail Id already exist")
-            return render_to_response('register/register_form.html', {'message': "success"})
+            #response = JsonResponse("E-mail Id already exist", safe=False)
+            #response['success'] = False
+            #response['message'] = "E-mail Id already exist"
+            # return JsonResponse(response)<span>{{message}}</span>
+            context = {
+                'message': 'E-mail Id already exist'
+
+            }
+            return render_to_response('register/register_form.html', context)
         else:
             p = Register.objects.create(user=user, email=email, password=password, confirm_password=confirm_password)
             request.session['email'] = email
@@ -47,20 +97,30 @@ def register_form(request):
 @csrf_exempt
 def otp_ver(request):
     if request.method == 'GET':
-        return render_to_response('register/otp_ver.html', {'message': "success"})
+        return render_to_response('register/otp_ver.html')
     elif request.method == 'POST':
         otp = request.POST['otp']
         print(otp)
         is_verified = True
         user_verify = User_ver.objects.filter(otp=otp).update(is_verified=is_verified)
         if user_verify:
-            return redirect('/register/register/login/')
+            context = {
+                'message': 'Successfully OTP verified'
+
+            }
+            return redirect('/register/register/login/', context)
+        else:
+            context = {
+                'message': 'Invalid OTP'
+
+            }
+            return render_to_response('register/otp_ver.html', context)
 
 
 @csrf_exempt
 def login(request):
     if request.method == 'GET':
-        return render_to_response('register/login.html', {'message': "success"})
+        return render_to_response('register/login.html')
     elif request.method == 'POST':
         email = request.POST['email']
         print(email)
@@ -68,20 +128,27 @@ def login(request):
         print(password)
         register_instance1 = Register.objects.get(email=email)
         user_verified = User_ver.objects.get(user=register_instance1)
+        request.session['email'] = email
         if user_verified.is_verified == True:
             print("User is verified")
-            register_instance = Register.objects.get(email=email)
-            print(register_instance.password)
-            print(register_instance.email)
-            password1 = register_instance.password
+            #register_instance = Register.objects.get(email=email)
+            print(register_instance1.password)
+            print(register_instance1.email)
+            password1 = register_instance1.password
             if password1 == password:
                 return redirect('/register/register/home/')
             else:
-                print("Invalid login Email Id and password")
-                return render_to_response('register/login.html', {'message': "success"})
+                context = {
+                    'message': 'Invalid password'
+
+                }
+                return render_to_response('register/login.html', context)
         else:
-            print("User is not verified")
-            return render_to_response('register/login.html', {'message': "success"})
+            context = {
+                'message': 'User is not verified'
+
+            }
+            return render_to_response('register/login.html', context)
 
 @csrf_exempt
 def forget_password(request):
@@ -106,16 +173,19 @@ def forget_password(request):
 @csrf_exempt
 def reset_password(request):
     if request.method == 'GET':
-        return render_to_response('register/reset_password.html', {'message': "success"})
+        return render_to_response('register/reset_password.html')
     elif request.method == 'POST':
-        if request.session.has_key('email'):
-            email = request.session['email']
-            print(email)
+        email = request.session['email']
+        print(email)
+        if email:
             otp = request.POST['otp']
             print(otp)
             password = request.POST['pass']
             print(password)
             confirm_password = request.POST['con']
             print(confirm_password)
-            reset_password = Register.objects.filter(email=email).update(password=password, confirm_password=confirm_password)
-            return redirect('/register/register/login/')
+            if otp != "" and password == confirm_password:
+                reset_password = Register.objects.filter(email=email).update(password=password, confirm_password=confirm_password)
+                return redirect('/register/register/login/')
+            else:
+                return render_to_response('register/reset_password.html')

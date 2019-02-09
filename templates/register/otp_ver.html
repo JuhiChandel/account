@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
 <head>
     <meta charset="UTF-8">
     <title>OTP</title>
 </head>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 <body>
     <div id="header"><span id="title"></span>
-    <form method="POST" action="/register/register/otp_ver/" onsubmit="return check(this)">
+    <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
+    <form name="myForm" method="POST" action="/register/register/otp_ver/" onsubmit="return check(form)">
     {% csrf_token %}
         <div id="content">
             <div id="content1">
@@ -25,21 +26,7 @@
             </div>
         </div>
 </form>
-  <script type="text/javascript">
-
-    function check(form)
-    {
-        otp = document.getElementById("otp");
-
-        if(form.pass.value.length < 4)
-            {
-
-                M.toast({html: 'Invalid otp'});
-                form.otp.focus();
-                return false;
-            }
-    }
-  </script>
+{{message}}
 </div>
 </body>
 </html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Student</title>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<body>
+    <link rel="stylesheet" type="text/css" href="{% static 'register/style.css' %}">
+    <form name="myForm" method="POST" action="/register/register/create_student/">
+        {% csrf_token %}
+
+        <nav>
+            <div id="header1">
+                <a href="#" class="brand-logo">Home</a>
+                <ul  class="right hide-on-med-and-down">
+                <li><a href="http://127.0.0.1:8000/register/register/home/">Home</a></li>
+                <li><a href="http://127.0.0.1:8000/register/register/create_student/">Create Student</a></li>
+                <li><a href="http://127.0.0.1:8000/register/register/logout/">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div id="content2">
+            <div id="content4">
+                Enrollment No:<br />{{message}}
+                <input type="text" name="enroll" id="enroll" />
+                <br />
+                Name:<br />
+                <input type="text" name="name" id="name" />
+                <br />
+                Class:<br />
+                <input type="text" name="class1" id="class1" />
+                <br />
+                <br />
+                      Stream<select class="browser-default" name="stream">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="None">None</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Commerce">Commerce</option>
+                      </select>
+                <br />
+                Father's Name:<br />
+                <input type="text" name="father" id="father" />
+                <br />
+                Date Of Birth:<br />
+                <input type="date" name="dob" id="dob"/>
+                <br />
+                Date Of Addmission:<br />
+                <input type="date" name="add" id="add"/>
+                <br />
+                <br />
+                <div id="b">
+                    <input type="submit" value="Submit" id="button" />
+                </div>
+                <br />
+            </div>
+        </div>
+    </form>
+
+</body>
+</html>
